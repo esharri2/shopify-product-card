@@ -1,0 +1,23 @@
+{
+  "name": "shopify-product-card",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "npm-run-all -p dev:*",
+    "publish": "npm-run-all -s publish:*",
+    "dev:shopify": "source .env && shopify theme dev --path src --theme $THEME_ID --store $STORE",
+    "dev:css": "postcss src/styles/main.css --o src/assets/main.output.css --verbose --watch",
+    "publish:shopify": "source .env && shopify theme push --path src --theme $THEME_ID --store $STORE --allow-live"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.0.0",
+    "npm-run-all": "^4.1.5",
+    "postcss": "^8.5.1",
+    "postcss-cli": "^11.0.0",
+    "tailwindcss": "^4.0.0"
+  }
+}
