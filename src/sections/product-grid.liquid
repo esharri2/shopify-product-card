@@ -1,7 +1,14 @@
-<ul>
+<script src="{{ 'ProductCard.js' | asset_url }}" type="module"></script>
+
+<ul class="grid grid-cols-[repeat(auto-fit,_minmax(min(320px,_100%),_1fr))]">
   {%- for product in collection.products -%}
+    {%- assign load_eagerly = false -%}
+    {%- if forloop.index0 < 3 -%}
+      {%- assign load_eagerly = true -%}
+    {%- endif -%}
     <li>
-      {%- render 'product-card', product: product -%}
+      {%- comment -%} 330 is used as image_size since it's roughly the midpoint between the high and low range of the width {%- endcomment -%}
+      {%- render 'product-card', product: product, load_eagerly: load_eagerly, image_size: 330 -%}
     </li>
   {%- endfor -%}
 </ul>

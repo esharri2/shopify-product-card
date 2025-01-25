@@ -1,49 +1,94 @@
 {%- comment -%}
-  Parameters
+  Parameters:
   - product - product object
+  - load_eagerly - boolean - indicating whether the first image on the card should load eagerly
+  - image_size - number - target size for image, defaults to 330
 {%- endcomment -%}
 
 {% liquid
   assign first_variant = product.variants[0]
   assign compare_at_price = first_variant.compare_at_price
   assign price = first_variant.price
-  assign image = first_variant.image | default: product.featured_image
   assign color_options = product.options_by_name.Color.values
   assign colors = shop.metaobjects['shopify--color-pattern']
   if compare_at_price > price
     assign is_on_sale = true
   endif
+  assign image_size = image_size | default: 330
 %}
 
-<product-card>
-  <div>
-    {{ image | image_url: width: 300 | image_tag }}
+<product-card class="@container block px-22 py-27">
+  <div class="border border-solid border-background-grey p-20 relative rounded-[10px]">
+    {%- for variant in product.variants -%}
+      {%- liquid
+        assign loading = 'lazy'
+        assign preload = false
+
+        if load_eagerly == true and forloop.first
+          assign loading = 'eager'
+          if section.index0 == 0
+            assign preload = true
+          endif
+        endif
+
+        assign class = 'aspect-11/12 cover object w-full'
+        if forloop.index0 > 0
+          assign class = class | append: ' hidden'
+          assign loading = 'lazy'
+        endif
+
+        assign width = image_size | times: 2
+        assign sizes = image_size | append: 'px'
+        assign widths = image_size | append: ', ' | append: width
+      -%}
+
+      {{-
+        variant.image
+        | default: product.featured_image
+        | image_url: width: width
+        | image_tag: widths: widths, sizes: sizes, class: class, loading: loading, preload: preload
+      -}}
+    {%- endfor -%}
     {%- if is_on_sale -%}
-      <div>{{ 'on_sale' | t }}</div>
+      <div class="absolute top-5 left-5 @xsm:top-20 @xsm:left-20  border border-solid border-red font-secondary py-6 px-13 rounded-[26px] text-red">
+        {{ 'on_sale' | t }}
+      </div>
     {%- endif -%}
   </div>
-  {%- for variant in product.variants -%}
-    {%- for option in variant.options -%}
-      {%- if color_options contains option -%}
-        {%- assign color_name = option -%}
-        {%- assign color_hex = colors[option].color -%}
-        {%- break -%}
+
+  <div class="mt-15">
+    {%- for variant in product.variants -%}
+      {%- for option in variant.options -%}
+        {%- if color_options contains option -%}
+          {%- assign color_name = option -%}
+          {%- assign color_hex = colors[option].color -%}
+          {%- break -%}
+        {%- endif -%}
+      {%- endfor -%}
+      {%- if color_name and color_hex -%}
+        {%- comment -%} The button element is larger than the swatch to provide accessible target size {%- endcomment -%}
+        <button
+          aria-label="{{  'swatch_label' | t: color_name: color_name }}"
+          aria-pressed="{{ forloop.first }}"
+          class="cursor-pointer p-1 mr-3 w-24 h-24 [&[aria-pressed='true']>div]:outline-navy"
+        >
+          <div
+            class="outline outline-transparent outline-offset-1 rounded-full w-20 h-20"
+            style="background-color: {{ color_hex }}"
+          ></div>
+        </button>
       {%- endif -%}
     {%- endfor -%}
-    {%- if color_name and color_hex -%}
-      <button
-        aria-label="{{  'swatch_label' | t: color_name: color_name }}"
-        aria-pressed="{{ forloop.first }}"
-        style="background-color: {{ color_hex }}"
-      ></button>
-    {%- endif -%}
-  {%- endfor -%}
-  <div>{{ product.vendor }}</div>
-  <a href="{{ product.url }}">{{ product.title }}</a>
-  <div>
+  </div>
+
+  <div class="mt-15 text-sm">{{ product.vendor }}</div>
+  <a class="block mt-8 text-navy" href="{{ product.url }}">{{ product.title }}</a>
+  <div class="mt-8 text-sm">
     {%- if is_on_sale -%}
-      <s>{{ compare_at_price }}</s>
+      <s class="mr-8">{{ compare_at_price | money_with_currency }}</s>
     {%- endif -%}
-    {{ price }}
+    <span class="{% if is_on_sale %} text-red {% endif %}">
+      {{ price | money_with_currency }}
+    </span>
   </div>
 </product-card>

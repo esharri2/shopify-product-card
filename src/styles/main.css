@@ -1,7 +1,13 @@
 @import "tailwindcss";
 
 @theme {
+  --color-background-grey: #e8e8e8;
+  --color-black: #111111;
+  --color-navy: #0a4874;
+  --color-red: #ff0000;
+  --container-xsm: 300px;
   --font-primary: "Roboto", "Franklin Gothic Medium", Tahoma, sans-serif;
   --font-secondary: "ITC Franklin Gothic", "Roboto", "Franklin Gothic Medium",
     Tahoma, sans-serif;
+  --spacing: 1px;
 }
