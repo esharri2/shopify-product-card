@@ -1,0 +1,49 @@
+{%- comment -%}
+  Parameters
+  - product - product object
+{%- endcomment -%}
+
+{% liquid
+  assign first_variant = product.variants[0]
+  assign compare_at_price = first_variant.compare_at_price
+  assign price = first_variant.price
+  assign image = first_variant.image | default: product.featured_image
+  assign color_options = product.options_by_name.Color.values
+  assign colors = shop.metaobjects['shopify--color-pattern']
+  if compare_at_price > price
+    assign is_on_sale = true
+  endif
+%}
+
+<product-card>
+  <div>
+    {{ image | image_url: width: 300 | image_tag }}
+    {%- if is_on_sale -%}
+      <div>{{ 'on_sale' | t }}</div>
+    {%- endif -%}
+  </div>
+  {%- for variant in product.variants -%}
+    {%- for option in variant.options -%}
+      {%- if color_options contains option -%}
+        {%- assign color_name = option -%}
+        {%- assign color_hex = colors[option].color -%}
+        {%- break -%}
+      {%- endif -%}
+    {%- endfor -%}
+    {%- if color_name and color_hex -%}
+      <button
+        aria-label="{{  'swatch_label' | t: color_name: color_name }}"
+        aria-pressed="{{ forloop.first }}"
+        style="background-color: {{ color_hex }}"
+      ></button>
+    {%- endif -%}
+  {%- endfor -%}
+  <div>{{ product.vendor }}</div>
+  <a href="{{ product.url }}">{{ product.title }}</a>
+  <div>
+    {%- if is_on_sale -%}
+      <s>{{ compare_at_price }}</s>
+    {%- endif -%}
+    {{ price }}
+  </div>
+</product-card>

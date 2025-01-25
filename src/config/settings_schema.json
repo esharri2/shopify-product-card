@@ -1,3 +1,19 @@
 [
-
+  {
+    "name": "t:settings_schema.typography.name",
+    "settings": [
+      {
+        "type": "font_picker",
+        "id": "font_primary",
+        "default": "roboto_n4",
+        "label": "t:settings_schema.font_primary"
+      },
+      {
+        "type": "font_picker",
+        "id": "font_secondary",
+        "default": "itc_franklin_gothic_n5",
+        "label": "t:settings_schema.font_secondary"
+      }
+    ]
+  }
 ]

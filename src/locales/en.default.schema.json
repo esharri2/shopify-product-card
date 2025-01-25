@@ -1,0 +1,12 @@
+{
+  "settings_schema": {
+    "typography": {
+      "name": "Typography",
+      "font_primary": "Primary font",
+      "font_secondary": "Secondary font"
+    },
+    "product_grid": {
+      "name": "Product Grid"
+    }
+  }
+}

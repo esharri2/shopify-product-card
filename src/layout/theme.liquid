@@ -19,8 +19,12 @@
     {% endif %}
     {{ content_for_header }}
     {{ 'main.output.css' | asset_url | stylesheet_tag }}
+    <style>
+      {{ settings.font_primary | font_face: font_display: 'swap' }}
+      {{ settings.font_secondary | font_face: font_display: 'swap' }}
+    </style>
   </head>
-  <body>
+  <body class="font-sans">
     <main>
       {{ content_for_layout }}
     </main>
