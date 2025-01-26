@@ -5,12 +5,21 @@
 <ul class="grid grid-cols-[repeat(auto-fit,_minmax(min(320px,_100%),_1fr))]">
   {%- for product in collection.products -%}
     {%- assign load_eagerly = false -%}
+    {%- assign is_first_card = false -%}
     {%- if forloop.index0 < 6 -%}
       {%- assign load_eagerly = true -%}
+      {%- if forloop.first -%}
+        {%- assign is_first_card = true -%}
+      {%- endif -%}
     {%- endif -%}
     <li>
       {%- comment -%} 330 is used as image_size since it's roughly the midpoint between the high and low range of the width {%- endcomment -%}
-      {%- render 'product-card', product: product, load_eagerly: load_eagerly, image_size: 330 -%}
+      {%- render 'product-card',
+        product: product,
+        load_eagerly: load_eagerly,
+        image_size: 330,
+        is_first_card: is_first_card
+      -%}
     </li>
   {%- endfor -%}
 </ul>

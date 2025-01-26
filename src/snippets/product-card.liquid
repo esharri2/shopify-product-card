@@ -2,6 +2,7 @@
   Parameters:
   - product - product object
   - load_eagerly - boolean - indicating whether the first image on the card should load eagerly
+  - is_first_card - boolean - indicates first card in group; used to enable preload if other eager loading conditions are met
   - image_size - number - target size for image, defaults to 330
 {%- endcomment -%}
 
@@ -32,7 +33,7 @@
 
           if load_eagerly == true and forloop.first
             assign loading = 'eager'
-            if section.index0 == 0
+            if section.index0 == 0 and is_first_card
               assign preload = true
             endif
           endif
