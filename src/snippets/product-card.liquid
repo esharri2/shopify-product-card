@@ -19,32 +19,33 @@
 
 <product-card class="@container block px-22 py-27 relative group">
   <div class="border border-solid border-background-grey overflow-hidden p-20 relative rounded-[10px]">
-    {%- for variant in product.variants -%}
-      {%- liquid
-        assign loading = 'lazy'
-        assign preload = false
-
-        if load_eagerly == true and forloop.first
-          assign loading = 'eager'
-          if section.index0 == 0
-            assign preload = true
-          endif
-        endif
-
-        assign class = 'aspect-11/12 object-contain w-full'
-        if forloop.index0 > 0
-          assign class = class | append: ' hidden'
+    {% comment %} Only adding the hover + translate effect when there is an unhidden secondary image {% endcomment %}
+    <div class="flex transition aspect-11/12 has-[[data-secondary]:not(.hidden)]:group-hover:translate-x-[-100%]">
+      {%- for variant in product.variants -%}
+        {%- liquid
           assign loading = 'lazy'
-        endif
+          assign preload = false
 
-        assign width = image_size | times: 2
-        assign sizes = image_size | append: 'px'
-        assign widths = image_size | append: ', ' | append: width
+          if load_eagerly == true and forloop.first
+            assign loading = 'eager'
+            if section.index0 == 0
+              assign preload = true
+            endif
+          endif
 
-        assign secondary_image = variant.metafields.custom.secondary_image
-      -%}
+          assign class = 'object-contain w-full'
+          if forloop.index0 > 0
+            assign class = class | append: ' hidden'
+            assign loading = 'lazy'
+          endif
 
-      <div class="flex transition {% if secondary_image %} group-hover:translate-x-[-100%] {% endif %}">
+          assign width = image_size | times: 2
+          assign sizes = image_size | append: 'px'
+          assign widths = image_size | append: ', ' | append: width
+
+          assign secondary_image = variant.metafields.custom.secondary_image
+        -%}
+
         {{-
           variant.image
           | default: product.featured_image
@@ -62,11 +63,17 @@
           {{-
             secondary_image
             | image_url: width: width
-            | image_tag: widths: widths, sizes: sizes, class: class, loading: 'lazy', data-variant-id: variant.id
+            | image_tag:
+              widths: widths,
+              sizes: sizes,
+              class: class,
+              loading: 'lazy',
+              data-variant-id: variant.id,
+              data-secondary: true
           -}}
         {% endif %}
-      </div>
-    {%- endfor -%}
+      {%- endfor -%}
+    </div>
     {%- if is_on_sale -%}
       <div class="absolute top-5 left-5 @xsm:top-20 @xsm:left-20  border border-solid border-red font-secondary py-6 px-13 rounded-[26px] text-red">
         {{ 'on_sale' | t }}
