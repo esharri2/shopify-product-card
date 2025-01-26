@@ -1,5 +1,7 @@
 <script src="{{ 'ProductCard.js' | asset_url }}" type="module"></script>
 
+<h1 class="my-15 text-2xl text-center">{{ collection.title }}</h1>
+
 <ul class="grid grid-cols-[repeat(auto-fit,_minmax(min(320px,_100%),_1fr))]">
   {%- for product in collection.products -%}
     {%- assign load_eagerly = false -%}
