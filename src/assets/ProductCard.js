@@ -22,10 +22,10 @@ export class ProductCard extends HTMLElement {
     this.images = this.images || this.querySelectorAll(`img[data-variant-id]`);
 
     this.images.forEach((image) => {
-      image.classList.add("hidden");
-
       if (image.dataset.variantId === variantId) {
         image.classList.remove("hidden");
+      } else {
+        image.classList.add("hidden");
       }
     });
 

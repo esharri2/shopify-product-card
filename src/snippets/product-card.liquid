@@ -17,8 +17,8 @@
   assign image_size = image_size | default: 330
 %}
 
-<product-card class="@container block px-22 py-27 relative">
-  <div class="border border-solid border-background-grey p-20 relative rounded-[10px]">
+<product-card class="@container block px-22 py-27 relative group">
+  <div class="border border-solid border-background-grey overflow-hidden p-20 relative rounded-[10px]">
     {%- for variant in product.variants -%}
       {%- liquid
         assign loading = 'lazy'
@@ -31,7 +31,7 @@
           endif
         endif
 
-        assign class = 'aspect-11/12 cover object w-full'
+        assign class = 'aspect-11/12 object-contain w-full'
         if forloop.index0 > 0
           assign class = class | append: ' hidden'
           assign loading = 'lazy'
@@ -40,20 +40,32 @@
         assign width = image_size | times: 2
         assign sizes = image_size | append: 'px'
         assign widths = image_size | append: ', ' | append: width
+
+        assign secondary_image = variant.metafields.custom.secondary_image
       -%}
 
-      {{-
-        variant.image
-        | default: product.featured_image
-        | image_url: width: width
-        | image_tag:
-          widths: widths,
-          sizes: sizes,
-          class: class,
-          loading: loading,
-          preload: preload,
-          data-variant-id: variant.id
-      -}}
+      <div class="flex transition {% if secondary_image %} group-hover:translate-x-[-100%] {% endif %}">
+        {{-
+          variant.image
+          | default: product.featured_image
+          | image_url: width: width
+          | image_tag:
+            widths: widths,
+            sizes: sizes,
+            class: class,
+            loading: loading,
+            preload: preload,
+            data-variant-id: variant.id
+        -}}
+
+        {% if secondary_image %}
+          {{-
+            secondary_image
+            | image_url: width: width
+            | image_tag: widths: widths, sizes: sizes, class: class, loading: 'lazy', data-variant-id: variant.id
+          -}}
+        {% endif %}
+      </div>
     {%- endfor -%}
     {%- if is_on_sale -%}
       <div class="absolute top-5 left-5 @xsm:top-20 @xsm:left-20  border border-solid border-red font-secondary py-6 px-13 rounded-[26px] text-red">
@@ -62,7 +74,7 @@
     {%- endif -%}
   </div>
 
-  <ul class="flex gap-3 mt-15">
+  <ul class="flex mt-15">
     {%- for variant in product.variants -%}
       {%- for option in variant.options -%}
         {%- if color_options contains option -%}
@@ -76,13 +88,12 @@
         <li>
           <button
             data-variant-switch
-            aria-label="{{  'swatch_label' | t: color_name: color_name }}"
+            aria-label="{{ 'swatch_label' | t: color_name: color_name }}"
             aria-pressed="{{ forloop.first }}"
             data-variant-id="{{ variant.id }}"
             data-variant-price="{{ variant.price | money }}"
             data-variant-compare-at-price="{{ variant.compare_at_price | money }}"
-
-            class="cursor-pointer p-1 w-24 h-24 [&[aria-pressed='true']>div]:outline-navy relative z-2"
+            class="cursor-pointer w-27 h-24 [&[aria-pressed='true']>div]:outline-navy relative z-2"
           >
             <div
               class="outline outline-transparent outline-offset-1 pointer-events-none rounded-full w-20 h-20 transition"
@@ -96,7 +107,10 @@
 
   <div class="mt-15 text-sm">{{ product.vendor }}</div>
 
-  <a class="block mt-8 text-navy after:content=[''] after:absolute after:inset-0 after:z-1" href="{{ product.url }}">
+  <a
+    class="block mt-8 text-navy after:content=[''] after:absolute after:inset-0 after:z-1 after:cursor-pointer"
+    href="{{ product.url }}"
+  >
     {{- product.title -}}
   </a>
   <div class="mt-8 text-sm">
