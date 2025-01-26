@@ -19,8 +19,12 @@
 
 <product-card class="@container block px-22 py-27 relative group">
   <div class="border border-solid border-background-grey overflow-hidden p-20 relative rounded-[10px]">
-    {% comment %} Only adding the hover/focus + translate effect when there is an unhidden secondary image {% endcomment %}
-    <div class="flex transition aspect-11/12 has-[[data-secondary]:not(.hidden)]:group-hover:translate-x-[-100%] has-[[data-secondary]:not(.hidden)]:group-focus-within:translate-x-[-100%]">
+    {% comment %}
+      Only adding translate effect to show secondary image when there is an unhidden secondary image and:
+      - card is hovered
+      - the product title link has focus-visible (for keyboard users)
+    {% endcomment %}
+    <div class="flex transition aspect-11/12 has-[[data-secondary]:not(.hidden)]:group-hover:translate-x-[-100%] has-[[data-secondary]:not(.hidden)]:group-has-[a:focus-visible]:translate-x-[-100%]">
       {%- for variant in product.variants -%}
         {%- liquid
           assign loading = 'lazy'
